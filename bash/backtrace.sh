@@ -2,7 +2,7 @@
 #
 # depends on:
 # - github.com/glaudiston/pragma_once
-. $(dirname $(realpath $BASH_SOURCE --relative-to .))/pragma_once/bash/pragma_once.sh && return 0
+. $(dirname $(realpath $BASH_SOURCE --relative-to .))/pragma_once/bash/pragma_once.sh || return 0
 #enable -f realpath realpath # use realpath as builtin wrapper to avoid excessive forking but it is commented because it does not support --relative-to option
 shopt -s extdebug # Activate BASH_ARGV/BASH_ARGC variables
 backtrace(){
