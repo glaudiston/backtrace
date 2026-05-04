@@ -10,10 +10,11 @@ backtrace(){
 	echo backtrace:
 	local argc=0;
 	local argv_pos=$argc;
+	local script_file="";
 	#echo "FULL BASH_ARGC = [${BASH_ARGC[@]}]"
 	#echo "FULL BASH_ARGV = [${BASH_ARGV[@]}]"
 	for ((i=0;;i++,argv_pos+=argc));do
-		IFS=" " read -ra caller_info <<< $(caller $i);
+		read -ra caller_info <<< $(caller $i);
 		[ "$caller_info" == "" ] && break;
 		local line="${caller_info[0]}"
 		local funcname=${caller_info[1]-""};
@@ -22,6 +23,14 @@ backtrace(){
 		argc=${BASH_ARGC[i+1]};
 		local args_array=("${BASH_ARGV[@]:argv_pos:argc}")
 		local reversed_args=()
+		# WARNING:
+		# Bash stores the arguments on the internal execution stack.
+		# When a function is called, the arguments are pushed onto the stack.
+		# To optimize for the current frame, Bash provides the most recently pushed argument first.
+		# Essentially, `BASH_ARGV` represents the stack as it exists in memory,
+		# and since it's a stack (LIFO), the first element of the slice 
+		# for a specific frame is the *last* argument passed to that function.
+		# ** This reversal loop is the correct and necessary way to handle this. **
 		for (( j=argc-1; j>=0; j-- )); do
 			reversed_args+=("${args_array[j]}")
 		done
