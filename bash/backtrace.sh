@@ -1,12 +1,10 @@
 #!/bin/bash
 #
 # depends on:
-# - github.com/glaudiston/pragma_once
-. $(dirname $(realpath $BASH_SOURCE --relative-to .))/pragma_once/bash/pragma_once.sh || return 0
 #enable -f realpath realpath # use realpath as builtin wrapper to avoid excessive forking but it is commented because it does not support --relative-to option
 shopt -s extdebug # Activate BASH_ARGV/BASH_ARGC variables
 backtrace(){
-	local caller_info;
+	local caller_info="";
 	echo backtrace:
 	local argc=0;
 	local argv_pos=$argc;
@@ -15,7 +13,7 @@ backtrace(){
 	#echo "FULL BASH_ARGV = [${BASH_ARGV[@]}]"
 	for ((i=0;;i++,argv_pos+=argc));do
 		read -ra caller_info <<< $(caller $i);
-		[ "$caller_info" == "" ] && break;
+		[ "${caller_info:-}" == "" ] && break;
 		local line="${caller_info[0]}"
 		local funcname=${caller_info[1]-""};
 		local ref_file="${caller_info[2]-""}";
